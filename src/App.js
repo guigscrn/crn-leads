@@ -121,7 +121,7 @@ export default function CRNLeadsLanding() {
       if (!formData.prenom.trim()) newErrors.prenom = "Requis";
       if (!formData.nom.trim()) newErrors.nom = "Requis";
       if (!formData.telephone.trim()) newErrors.telephone = "Requis";
-      else if (!/^[\d\s\+]{10,}$/.test(formData.telephone.trim())) newErrors.telephone = "Numéro invalide";
+      else if (!/^[\d\s+]{10,}$/.test(formData.telephone.trim())) newErrors.telephone = "Numéro invalide";
       if (!formData.email.trim()) newErrors.email = "Requis";
       else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email invalide";
     }
@@ -130,7 +130,6 @@ export default function CRNLeadsLanding() {
   };
 
   const [sending, setSending] = useState(false);
-  const iframeRef = useRef(null);
 
   const nextStep = async () => {
     if (validateStep(formStep)) {
