@@ -78,7 +78,7 @@ const ProgressBar = ({ step, total }) => (
   </div>
 );
 
-export default function CRNLeadsLanding() {
+export default function PrezimoLanding() {
   const [formStep, setFormStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -93,11 +93,26 @@ export default function CRNLeadsLanding() {
   const [errors, setErrors] = useState({});
   const [heroVisible, setHeroVisible] = useState(false);
   const [stepsVisible, setStepsVisible] = useState(false);
+  const [showCookies, setShowCookies] = useState(true);
+  const [showLegal, setShowLegal] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
   const formRef = useRef(null);
   const stepsRef = useRef(null);
 
   useEffect(() => {
-       setTimeout(() => setHeroVisible(true), 100);
+    // Meta Pixel
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    window.fbq('init', '950973301253116');
+    window.fbq('track', 'PageView');
+
+    setTimeout(() => setHeroVisible(true), 100);
     const observer = new IntersectionObserver(
       (entries) => { entries.forEach(e => { if (e.isIntersecting) setStepsVisible(true); }); },
       { threshold: 0.2 }
@@ -404,7 +419,7 @@ export default function CRNLeadsLanding() {
 
   return (
     <div style={{ fontFamily: font, background: COLORS.offWhite, minHeight: "100vh", overflow: "hidden" }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
 
       {/* NAV */}
       <nav style={{
@@ -424,18 +439,17 @@ export default function CRNLeadsLanding() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{
-            width: 32,
-            height: 32,
-            borderRadius: 8,
-            background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            width: 28,
+            height: 28,
+            borderRadius: 7,
+            border: `2px solid ${COLORS.accent}`,
+            position: "relative",
           }}>
-            <span style={{ color: COLORS.primary, fontWeight: 800, fontSize: 14, fontFamily: font }}>C</span>
+            <div style={{ position: "absolute", top: "20%", left: "20%", width: 9, height: 9, borderRadius: 2, background: COLORS.accent }} />
+            <div style={{ position: "absolute", bottom: "16%", right: "16%", width: 5, height: 5, borderRadius: "50%", background: COLORS.success }} />
           </div>
-          <span style={{ color: COLORS.white, fontSize: 17, fontWeight: 700, letterSpacing: 1.5 }}>
-            CRN <span style={{ color: COLORS.accent }}>LEADS</span>
+          <span style={{ fontFamily: "'Outfit', sans-serif", color: COLORS.white, fontSize: 18, fontWeight: 700, letterSpacing: 0.5 }}>
+            Prez<span style={{ color: COLORS.accent }}>imo</span>
           </span>
         </div>
         <button onClick={scrollToForm} style={{
@@ -718,16 +732,144 @@ export default function CRNLeadsLanding() {
       {/* FOOTER */}
       <footer style={{
         background: COLORS.primary,
-        padding: "32px 24px",
+        padding: "40px 24px 24px",
         textAlign: "center",
       }}>
-        <span style={{ color: COLORS.accent, fontSize: 15, fontWeight: 700, letterSpacing: 1.5, fontFamily: font }}>
-          CRN LEADS
-        </span>
-        <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginTop: 8 }}>
-          © 2026 CRN Leads — Tous droits réservés
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 }}>
+          <div style={{
+            width: 24, height: 24, borderRadius: 6,
+            border: `2px solid ${COLORS.accent}`,
+            position: "relative",
+          }}>
+            <div style={{ position: "absolute", top: "20%", left: "20%", width: 7, height: 7, borderRadius: 2, background: COLORS.accent }} />
+            <div style={{ position: "absolute", bottom: "16%", right: "16%", width: 4, height: 4, borderRadius: "50%", background: COLORS.success }} />
+          </div>
+          <span style={{ fontFamily: "'Outfit', sans-serif", color: COLORS.white, fontSize: 16, fontWeight: 700, letterSpacing: 0.5 }}>
+            Prez<span style={{ color: COLORS.accent }}>imo</span>
+          </span>
+        </div>
+        <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginBottom: 16 }}>
+          © 2026 Prezimo — Tous droits réservés
         </p>
+        <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
+          <button onClick={() => setShowLegal(true)} style={{
+            background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 11,
+            cursor: "pointer", fontFamily: font, textDecoration: "underline",
+          }}>Mentions légales</button>
+          <button onClick={() => setShowPrivacy(true)} style={{
+            background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 11,
+            cursor: "pointer", fontFamily: font, textDecoration: "underline",
+          }}>Politique de confidentialité</button>
+        </div>
       </footer>
+
+      {/* COOKIE BANNER */}
+      {showCookies && (
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200,
+          background: COLORS.primary, borderTop: `1px solid rgba(255,255,255,0.1)`,
+          padding: "16px 24px",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 16, flexWrap: "wrap",
+        }}>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, fontFamily: font, margin: 0, maxWidth: 500 }}>
+            Ce site utilise des cookies pour mesurer les performances de nos campagnes. En continuant, vous acceptez leur utilisation.
+          </p>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => setShowCookies(false)} style={{
+              padding: "8px 20px", borderRadius: 8,
+              background: COLORS.accent, border: "none",
+              color: COLORS.primary, fontSize: 13, fontWeight: 700,
+              fontFamily: font, cursor: "pointer",
+            }}>Accepter</button>
+            <button onClick={() => setShowCookies(false)} style={{
+              padding: "8px 20px", borderRadius: 8,
+              background: "rgba(255,255,255,0.1)", border: "none",
+              color: "rgba(255,255,255,0.5)", fontSize: 13, fontWeight: 600,
+              fontFamily: font, cursor: "pointer",
+            }}>Refuser</button>
+          </div>
+        </div>
+      )}
+
+      {/* MENTIONS LÉGALES MODAL */}
+      {showLegal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 300,
+          background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center",
+          padding: 20,
+        }} onClick={() => setShowLegal(false)}>
+          <div style={{
+            background: COLORS.white, borderRadius: 16, padding: "32px 28px",
+            maxWidth: 560, width: "100%", maxHeight: "80vh", overflowY: "auto",
+          }} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 16 }}>Mentions légales</h2>
+            <div style={{ fontSize: 13, color: COLORS.gray600, lineHeight: 1.7, fontFamily: font }}>
+              <p><strong>Éditeur du site :</strong> Prezimo — Service d'estimation immobilière en ligne.</p>
+              <p><strong>Responsable de la publication :</strong> [Votre nom complet]</p>
+              <p><strong>Adresse :</strong> [Votre adresse]</p>
+              <p><strong>Email :</strong> contact@prezimo.fr</p>
+              <p><strong>Hébergeur :</strong> Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis — https://vercel.com</p>
+              <p><strong>Numéro SIRET :</strong> [Votre numéro SIRET]</p>
+              <p style={{ marginTop: 12 }}>Conformément aux dispositions de la loi n°2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, les informations ci-dessus sont mises à disposition des utilisateurs du site.</p>
+            </div>
+            <button onClick={() => setShowLegal(false)} style={{
+              marginTop: 20, padding: "10px 24px", borderRadius: 8,
+              background: COLORS.primary, border: "none",
+              color: COLORS.white, fontSize: 13, fontWeight: 600,
+              fontFamily: font, cursor: "pointer",
+            }}>Fermer</button>
+          </div>
+        </div>
+      )}
+
+      {/* POLITIQUE DE CONFIDENTIALITÉ MODAL */}
+      {showPrivacy && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 300,
+          background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center",
+          padding: 20,
+        }} onClick={() => setShowPrivacy(false)}>
+          <div style={{
+            background: COLORS.white, borderRadius: 16, padding: "32px 28px",
+            maxWidth: 560, width: "100%", maxHeight: "80vh", overflowY: "auto",
+          }} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 16 }}>Politique de confidentialité</h2>
+            <div style={{ fontSize: 13, color: COLORS.gray600, lineHeight: 1.7, fontFamily: font }}>
+              <p><strong>Dernière mise à jour :</strong> Avril 2026</p>
+
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>1. Données collectées</h3>
+              <p>Nous collectons les données suivantes via notre formulaire : prénom, nom, numéro de téléphone, adresse email, type de bien, ville/quartier, et délai de vente souhaité.</p>
+
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>2. Finalité du traitement</h3>
+              <p>Ces données sont collectées dans le but de vous mettre en relation avec un professionnel de l'immobilier qui réalisera l'estimation gratuite de votre bien.</p>
+
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>3. Base légale</h3>
+              <p>Le traitement est fondé sur votre consentement, exprimé lors de la soumission du formulaire (article 6.1.a du RGPD).</p>
+
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>4. Destinataires des données</h3>
+              <p>Vos données sont transmises uniquement à un agent immobilier partenaire opérant dans votre secteur géographique. Elles ne sont jamais revendues à des tiers.</p>
+
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>5. Durée de conservation</h3>
+              <p>Vos données sont conservées pendant une durée maximale de 12 mois à compter de leur collecte, sauf opposition de votre part.</p>
+
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>6. Vos droits</h3>
+              <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation et de portabilité de vos données. Vous pouvez exercer ces droits en nous contactant à : contact@prezimo.fr</p>
+
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>7. Cookies</h3>
+              <p>Ce site utilise le pixel Meta (Facebook) à des fins de mesure de performance publicitaire. Vous pouvez accepter ou refuser ces cookies via le bandeau affiché lors de votre première visite.</p>
+
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>8. Réclamation</h3>
+              <p>Vous pouvez introduire une réclamation auprès de la CNIL (Commission Nationale de l'Informatique et des Libertés) : www.cnil.fr</p>
+            </div>
+            <button onClick={() => setShowPrivacy(false)} style={{
+              marginTop: 20, padding: "10px 24px", borderRadius: 8,
+              background: COLORS.primary, border: "none",
+              color: COLORS.white, fontSize: 13, fontWeight: 600,
+              fontFamily: font, cursor: "pointer",
+            }}>Fermer</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
