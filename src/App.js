@@ -61,6 +61,16 @@ const ShieldIcon = () => (
   </svg>
 );
 
+const StarIcon = ({ filled }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1L9.854 5.586H14.657L10.9 8.328L12.236 13L8 10.328L3.764 13L5.1 8.328L1.343 5.586H6.146L8 1Z"
+      fill={filled ? COLORS.accent : COLORS.gray200}
+      stroke={filled ? COLORS.accent : COLORS.gray200}
+      strokeWidth="0.5"
+    />
+  </svg>
+);
+
 const ProgressBar = ({ step, total }) => (
   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 28 }}>
     <div style={{ flex: 1, height: 5, borderRadius: 3, background: COLORS.gray200, overflow: "hidden" }}>
@@ -73,10 +83,91 @@ const ProgressBar = ({ step, total }) => (
       }} />
     </div>
     <span style={{ fontSize: 12, color: COLORS.gray400, fontFamily: "'DM Sans', sans-serif", fontWeight: 500, whiteSpace: "nowrap" }}>
-      Étape {step}/{total}
+      Etape {step}/{total}
     </span>
   </div>
 );
+
+// Testimonials data
+const TESTIMONIALS = [
+  { name: "Marie T.", city: "Saint-Etienne", text: "Estimation recue en moins de 24h, tres professionnel. J'ai pu vendre au bon prix grace a leur conseil.", stars: 5 },
+  { name: "Jean-Luc B.", city: "Firminy", text: "Service rapide et gratuit. L'expert connaissait tres bien le marche local. Je recommande.", stars: 5 },
+  { name: "Sophie M.", city: "Saint-Chamond", text: "Super experience ! Le formulaire prend 2 minutes et l'estimation etait tres precise.", stars: 5 },
+  { name: "Patrick D.", city: "Saint-Etienne", text: "J'etais sceptique mais l'estimation correspondait exactement au prix de vente final. Merci !", stars: 5 },
+  { name: "Nathalie R.", city: "Rive-de-Gier", text: "Tres reactive et professionnelle. Bien plus pratique qu'appeler plusieurs agences.", stars: 5 },
+  { name: "Michel F.", city: "Saint-Etienne", text: "Estimation gratuite et sans pression. L'expert m'a rappele rapidement et etait tres disponible.", stars: 5 },
+];
+
+const TestimonialsCarousel = ({ font }) => {
+  const [offset, setOffset] = useState(0);
+  const trackRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOffset(prev => prev - 1);
+    }, 30);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Reset offset when we've scrolled one full set
+  const cardWidth = 300 + 16; // card width + gap
+  const totalWidth = cardWidth * TESTIMONIALS.length;
+
+  useEffect(() => {
+    if (Math.abs(offset) >= totalWidth) {
+      setOffset(0);
+    }
+  }, [offset, totalWidth]);
+
+  const doubled = [...TESTIMONIALS, ...TESTIMONIALS];
+
+  return (
+    <div style={{ overflow: "hidden", width: "100%" }}>
+      <div
+        ref={trackRef}
+        style={{
+          display: "flex",
+          gap: 16,
+          transform: `translateX(${offset}px)`,
+          width: "max-content",
+        }}
+      >
+        {doubled.map((t, i) => (
+          <div key={i} style={{
+            width: 300,
+            background: COLORS.white,
+            borderRadius: 16,
+            padding: "24px 20px",
+            border: `1px solid ${COLORS.gray200}`,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+            flexShrink: 0,
+          }}>
+            <div style={{ display: "flex", gap: 3, marginBottom: 12 }}>
+              {[1,2,3,4,5].map(s => <StarIcon key={s} filled={s <= t.stars} />)}
+            </div>
+            <p style={{ fontSize: 14, color: COLORS.gray600, lineHeight: 1.6, margin: "0 0 16px", fontFamily: font, fontStyle: "italic" }}>
+              "{t.text}"
+            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: "50%",
+                background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 14, fontWeight: 700, color: COLORS.primary, fontFamily: font,
+              }}>
+                {t.name.charAt(0)}
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: COLORS.primary, fontFamily: font }}>{t.name}</p>
+                <p style={{ margin: 0, fontSize: 12, color: COLORS.gray400, fontFamily: font }}>{t.city}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default function PrezimoLanding() {
   const [formStep, setFormStep] = useState(0);
@@ -100,8 +191,6 @@ export default function PrezimoLanding() {
   const stepsRef = useRef(null);
 
   useEffect(() => {
-    
-
     setTimeout(() => setHeroVisible(true), 100);
     const observer = new IntersectionObserver(
       (entries) => { entries.forEach(e => { if (e.isIntersecting) setStepsVisible(true); }); },
@@ -118,15 +207,15 @@ export default function PrezimoLanding() {
   const validateStep = (step) => {
     const newErrors = {};
     if (step === 1) {
-      if (!formData.typeBien) newErrors.typeBien = "Sélectionnez un type de bien";
+      if (!formData.typeBien) newErrors.typeBien = "Selectionnez un type de bien";
       if (!formData.ville.trim()) newErrors.ville = "Indiquez votre ville ou quartier";
     } else if (step === 2) {
-      if (!formData.delai) newErrors.delai = "Sélectionnez un délai";
+      if (!formData.delai) newErrors.delai = "Selectionnez un delai";
     } else if (step === 3) {
       if (!formData.prenom.trim()) newErrors.prenom = "Requis";
       if (!formData.nom.trim()) newErrors.nom = "Requis";
       if (!formData.telephone.trim()) newErrors.telephone = "Requis";
-      else if (!/^[\d\s+]{10,}$/.test(formData.telephone.trim())) newErrors.telephone = "Numéro invalide";
+      else if (!/^[\d\s+]{10,}$/.test(formData.telephone.trim())) newErrors.telephone = "Numero invalide";
       if (!formData.email.trim()) newErrors.email = "Requis";
       else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email invalide";
     }
@@ -141,7 +230,6 @@ export default function PrezimoLanding() {
       if (formStep === 3) {
         setSending(true);
         try {
-          // Create a hidden form that submits to an iframe (bypasses CORS)
           const iframe = document.createElement("iframe");
           iframe.name = "hidden_iframe";
           iframe.style.display = "none";
@@ -175,16 +263,12 @@ export default function PrezimoLanding() {
           document.body.appendChild(form);
           form.submit();
 
-          // Cleanup after a short delay
           setTimeout(() => {
             document.body.removeChild(form);
             document.body.removeChild(iframe);
           }, 2000);
-        } catch (e) {
-          // silently continue
-        }
+        } catch (e) {}
         setSending(false);
-        // Track Lead event for Meta Pixel
         if (window.fbq) {
           window.fbq('track', 'Lead', {
             content_name: 'estimation-saint-etienne',
@@ -329,16 +413,11 @@ export default function PrezimoLanding() {
             </svg>
           </div>
           <h2 style={{ fontFamily: displayFont, fontSize: 28, color: COLORS.primary, marginBottom: 12 }}>
-            Demande envoyée !
+            Demande envoyee !
           </h2>
           <p style={{ fontSize: 16, color: COLORS.gray600, lineHeight: 1.6, marginBottom: 8 }}>
             Merci <strong style={{ color: COLORS.primary }}>{formData.prenom}</strong>. Un expert immobilier vous contactera dans les <strong style={{ color: COLORS.primary }}>24 heures</strong> pour vous communiquer l'estimation de votre bien.
           </p>
-          <div style={{ marginTop: 24, padding: "16px 20px", background: COLORS.accentSoft, borderRadius: 12, border: `1px solid ${COLORS.accent}22` }}>
-            <p style={{ fontSize: 14, color: COLORS.gray600, margin: 0 }}>
-              Vous souhaitez accélérer ? Appelez-nous au <strong style={{ color: COLORS.primary }}>04 XX XX XX XX</strong>
-            </p>
-          </div>
         </div>
       </div>
     );
@@ -358,7 +437,7 @@ export default function PrezimoLanding() {
             <ChoiceButton selected={formData.typeBien === "autre"} onClick={() => { setFormData({ ...formData, typeBien: "autre" }); setErrors({ ...errors, typeBien: "" }); }} icon={<OtherIcon />} label="Autre" />
           </div>
           {errors.typeBien && <p style={{ fontSize: 12, color: "#E53E3E", fontFamily: font }}>{errors.typeBien}</p>}
-          {renderInput("Ville / Quartier", "ville", "text", "Ex : Saint-Étienne centre, Firminy, Montreynaud...")}
+          {renderInput("Ville / Quartier", "ville", "text", "Ex : Saint-Etienne centre, Firminy, Montreynaud...")}
         </div>
       );
     }
@@ -367,10 +446,10 @@ export default function PrezimoLanding() {
       return (
         <div>
           <h3 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 6 }}>Votre projet</h3>
-          <p style={{ fontSize: 14, color: COLORS.gray400, marginBottom: 24 }}>Dans quel délai souhaitez-vous vendre ?</p>
+          <p style={{ fontSize: 14, color: COLORS.gray400, marginBottom: 24 }}>Dans quel delai souhaitez-vous vendre ?</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <DelayButton value="<3mois" label="Moins de 3 mois" selected={formData.delai === "<3mois"} />
-            <DelayButton value="3-6mois" label="3 à 6 mois" selected={formData.delai === "3-6mois"} />
+            <DelayButton value="3-6mois" label="3 a 6 mois" selected={formData.delai === "3-6mois"} />
             <DelayButton value=">6mois" label="Plus de 6 mois" selected={formData.delai === ">6mois"} />
             <DelayButton value="renseigne" label="Je me renseigne simplement" selected={formData.delai === "renseigne"} />
           </div>
@@ -382,12 +461,12 @@ export default function PrezimoLanding() {
     if (formStep === 3) {
       return (
         <div>
-          <h3 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 6 }}>Vos coordonnées</h3>
-          <p style={{ fontSize: 14, color: COLORS.gray400, marginBottom: 24 }}>Où souhaitez-vous recevoir votre estimation ?</p>
+          <h3 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 6 }}>Vos coordonnees</h3>
+          <p style={{ fontSize: 14, color: COLORS.gray400, marginBottom: 24 }}>Ou souhaitez-vous recevoir votre estimation ?</p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 14 }}>
-            {renderInput("Prénom", "prenom", "text", "Jean", true)}
+            {renderInput("Prenom", "prenom", "text", "Jean", true)}
             {renderInput("Nom", "nom", "text", "Dupont", true)}
-            {renderInput("Téléphone", "telephone", "tel", "06 12 34 56 78")}
+            {renderInput("Telephone", "telephone", "tel", "06 12 34 56 78")}
             {renderInput("Email", "email", "email", "jean.dupont@email.com")}
           </div>
         </div>
@@ -397,14 +476,14 @@ export default function PrezimoLanding() {
 
   const steps = [
     { num: "01", title: "Formulaire", desc: "Remplissez en 30 secondes" },
-    { num: "02", title: "Analyse", desc: "Un expert étudie votre bien" },
-    { num: "03", title: "Estimation", desc: "Résultat sous 24h" },
+    { num: "02", title: "Analyse", desc: "Un expert etudie votre bien" },
+    { num: "03", title: "Estimation", desc: "Resultat sous 24h" },
   ];
 
   const trustItems = [
     "100% gratuit et sans engagement",
     "Estimation par un professionnel local",
-    "Vos données restent confidentielles",
+    "Vos donnees restent confidentielles",
   ];
 
   return (
@@ -414,9 +493,7 @@ export default function PrezimoLanding() {
       {/* NAV */}
       <nav style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
+        top: 0, left: 0, right: 0,
         zIndex: 100,
         background: "rgba(15, 29, 53, 0.95)",
         backdropFilter: "blur(12px)",
@@ -428,13 +505,7 @@ export default function PrezimoLanding() {
         borderBottom: `1px solid rgba(255,255,255,0.06)`,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{
-            width: 28,
-            height: 28,
-            borderRadius: 7,
-            border: `2px solid ${COLORS.accent}`,
-            position: "relative",
-          }}>
+          <div style={{ width: 28, height: 28, borderRadius: 7, border: `2px solid ${COLORS.accent}`, position: "relative" }}>
             <div style={{ position: "absolute", top: "20%", left: "20%", width: 9, height: 9, borderRadius: 2, background: COLORS.accent }} />
             <div style={{ position: "absolute", bottom: "16%", right: "16%", width: 5, height: 5, borderRadius: "50%", background: COLORS.success }} />
           </div>
@@ -442,17 +513,12 @@ export default function PrezimoLanding() {
             Prez<span style={{ color: COLORS.accent }}>imo</span>
           </span>
         </div>
-        <button onClick={scrollToForm} style={{
+        <button onClick={() => { setFormStep(1); setTimeout(scrollToForm, 100); }} style={{
           padding: "8px 20px",
           background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`,
-          border: "none",
-          borderRadius: 8,
-          color: COLORS.primary,
-          fontSize: 13,
-          fontWeight: 700,
-          fontFamily: font,
-          cursor: "pointer",
-          letterSpacing: 0.3,
+          border: "none", borderRadius: 8,
+          color: COLORS.primary, fontSize: 13, fontWeight: 700,
+          fontFamily: font, cursor: "pointer", letterSpacing: 0.3,
         }}>
           Estimer mon bien
         </button>
@@ -469,95 +535,48 @@ export default function PrezimoLanding() {
         padding: "80px 24px 60px",
         overflow: "hidden",
       }}>
-        {/* Decorative elements */}
-        <div style={{
-          position: "absolute",
-          top: -120,
-          right: -120,
-          width: 400,
-          height: 400,
-          borderRadius: "50%",
-          background: `radial-gradient(circle, rgba(212,167,44,0.08) 0%, transparent 70%)`,
-        }} />
-        <div style={{
-          position: "absolute",
-          bottom: -80,
-          left: -80,
-          width: 300,
-          height: 300,
-          borderRadius: "50%",
-          background: `radial-gradient(circle, rgba(212,167,44,0.05) 0%, transparent 70%)`,
-        }} />
-        <div style={{
-          position: "absolute",
-          top: "15%",
-          left: "8%",
-          width: 1,
-          height: 120,
-          background: `linear-gradient(to bottom, transparent, ${COLORS.accent}33, transparent)`,
-        }} />
-        <div style={{
-          position: "absolute",
-          bottom: "20%",
-          right: "12%",
-          width: 1,
-          height: 80,
-          background: `linear-gradient(to bottom, transparent, ${COLORS.accent}22, transparent)`,
-        }} />
+        {/* Decorative */}
+        <div style={{ position: "absolute", top: -120, right: -120, width: 400, height: 400, borderRadius: "50%", background: `radial-gradient(circle, rgba(212,167,44,0.08) 0%, transparent 70%)` }} />
+        <div style={{ position: "absolute", bottom: -80, left: -80, width: 300, height: 300, borderRadius: "50%", background: `radial-gradient(circle, rgba(212,167,44,0.05) 0%, transparent 70%)` }} />
+        <div style={{ position: "absolute", top: "15%", left: "8%", width: 1, height: 120, background: `linear-gradient(to bottom, transparent, ${COLORS.accent}33, transparent)` }} />
+        <div style={{ position: "absolute", bottom: "20%", right: "12%", width: 1, height: 80, background: `linear-gradient(to bottom, transparent, ${COLORS.accent}22, transparent)` }} />
 
         <div style={{
-          maxWidth: 680,
-          width: "100%",
-          textAlign: "center",
-          position: "relative",
-          zIndex: 1,
+          maxWidth: 680, width: "100%", textAlign: "center",
+          position: "relative", zIndex: 1,
           opacity: heroVisible ? 1 : 0,
           transform: heroVisible ? "translateY(0)" : "translateY(30px)",
           transition: "all 0.8s cubic-bezier(.4,0,.2,1)",
         }}>
+          {/* Badge */}
           <div style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
+            display: "inline-flex", alignItems: "center", gap: 8,
             background: "rgba(212, 167, 44, 0.1)",
             border: "1px solid rgba(212, 167, 44, 0.2)",
-            borderRadius: 100,
-            padding: "8px 18px",
-            marginBottom: 28,
+            borderRadius: 100, padding: "8px 18px", marginBottom: 28,
           }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: COLORS.success, boxShadow: `0 0 8px ${COLORS.success}` }} />
             <span style={{ fontSize: 13, color: COLORS.accentHover, fontWeight: 600, letterSpacing: 0.5 }}>
-              Saint-Étienne & alentours
+              Saint-Etienne & alentours
             </span>
           </div>
 
           <h1 style={{
             fontFamily: displayFont,
             fontSize: "clamp(32px, 5vw, 52px)",
-            fontWeight: 800,
-            color: COLORS.white,
-            lineHeight: 1.15,
-            margin: "0 0 20px",
-            letterSpacing: -0.5,
+            fontWeight: 800, color: COLORS.white,
+            lineHeight: 1.15, margin: "0 0 20px", letterSpacing: -0.5,
           }}>
             Vendez votre bien au{" "}
-            <span style={{
-              background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}>
+            <span style={{ background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               meilleur prix
             </span>
           </h1>
 
           <p style={{
             fontSize: "clamp(16px, 2.2vw, 20px)",
-            color: "rgba(255,255,255,0.7)",
-            lineHeight: 1.6,
-            margin: "0 0 36px",
-            maxWidth: 520,
-            marginLeft: "auto",
-            marginRight: "auto",
+            color: "rgba(255,255,255,0.7)", lineHeight: 1.6,
+            margin: "0 0 36px", maxWidth: 520, marginLeft: "auto", marginRight: "auto",
           }}>
             Recevez une estimation gratuite de votre bien en 24h par un expert immobilier local.
           </p>
@@ -566,6 +585,7 @@ export default function PrezimoLanding() {
             Estimer mon bien gratuitement <ArrowRight />
           </CTAButton>
 
+          {/* Trust items */}
           <div style={{ display: "flex", justifyContent: "center", gap: 28, marginTop: 32, flexWrap: "wrap" }}>
             {trustItems.map((item, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -574,18 +594,39 @@ export default function PrezimoLanding() {
               </div>
             ))}
           </div>
+
+          {/* Stats row */}
+          <div style={{
+            display: "flex", justifyContent: "center", gap: 40, marginTop: 48,
+            flexWrap: "wrap",
+          }}>
+            {[
+              { num: "200+", label: "Estimations realisees" },
+              { num: "24h", label: "Delai de reponse" },
+              { num: "98%", label: "Clients satisfaits" },
+            ].map((s, i) => (
+              <div key={i} style={{ textAlign: "center" }}>
+                <div style={{
+                  fontFamily: displayFont,
+                  fontSize: 32, fontWeight: 800,
+                  background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`,
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                }}>
+                  {s.num}
+                </div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 500, marginTop: 2 }}>
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* STEPS */}
-      <section ref={stepsRef} style={{
-        padding: "72px 24px",
-        maxWidth: 800,
-        margin: "0 auto",
-      }}>
+      <section ref={stepsRef} style={{ padding: "72px 24px", maxWidth: 800, margin: "0 auto" }}>
         <div style={{
-          textAlign: "center",
-          marginBottom: 48,
+          textAlign: "center", marginBottom: 48,
           opacity: stepsVisible ? 1 : 0,
           transform: stepsVisible ? "translateY(0)" : "translateY(20px)",
           transition: "all 0.6s ease",
@@ -594,19 +635,16 @@ export default function PrezimoLanding() {
             Simple & Rapide
           </p>
           <h2 style={{ fontFamily: displayFont, fontSize: "clamp(24px, 3.5vw, 36px)", color: COLORS.primary, margin: 0 }}>
-            Comment ça marche
+            Comment ca marche
           </h2>
         </div>
 
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
           {steps.map((step, i) => (
             <div key={i} style={{
-              flex: "1 1 200px",
-              maxWidth: 240,
-              background: COLORS.white,
-              borderRadius: 18,
-              padding: "32px 24px",
-              textAlign: "center",
+              flex: "1 1 200px", maxWidth: 240,
+              background: COLORS.white, borderRadius: 18,
+              padding: "32px 24px", textAlign: "center",
               boxShadow: "0 4px 24px rgba(0,0,0,0.04)",
               border: `1px solid ${COLORS.gray200}`,
               opacity: stepsVisible ? 1 : 0,
@@ -614,61 +652,40 @@ export default function PrezimoLanding() {
               transition: `all 0.6s ease ${i * 0.15}s`,
             }}>
               <div style={{
-                width: 44,
-                height: 44,
-                borderRadius: 12,
+                width: 44, height: 44, borderRadius: 12,
                 background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                display: "flex", alignItems: "center", justifyContent: "center",
                 margin: "0 auto 16px",
-                color: COLORS.primary,
-                fontSize: 16,
-                fontWeight: 800,
-                fontFamily: font,
+                color: COLORS.primary, fontSize: 16, fontWeight: 800, fontFamily: font,
               }}>
                 {step.num}
               </div>
-              <h3 style={{ fontSize: 17, fontWeight: 700, color: COLORS.primary, marginBottom: 6, fontFamily: font }}>
-                {step.title}
-              </h3>
-              <p style={{ fontSize: 14, color: COLORS.gray400, margin: 0, lineHeight: 1.5 }}>
-                {step.desc}
-              </p>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: COLORS.primary, marginBottom: 6, fontFamily: font }}>{step.title}</h3>
+              <p style={{ fontSize: 14, color: COLORS.gray400, margin: 0, lineHeight: 1.5 }}>{step.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* FORM SECTION */}
-      <section ref={formRef} style={{
-        padding: "60px 24px 80px",
-        maxWidth: 560,
-        margin: "0 auto",
-      }}>
+      <section ref={formRef} style={{ padding: "60px 24px 80px", maxWidth: 560, margin: "0 auto" }}>
         {formStep > 0 && (
           <div style={{
-            background: COLORS.white,
-            borderRadius: 24,
+            background: COLORS.white, borderRadius: 24,
             padding: "36px 32px 32px",
             boxShadow: "0 12px 48px rgba(0,0,0,0.06)",
             border: `1px solid ${COLORS.gray200}`,
           }}>
             <ProgressBar step={formStep} total={3} />
-
             {renderFormContent()}
-
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, gap: 12 }}>
-              {formStep > 1 && (
-                <CTAButton secondary onClick={prevStep}>Retour</CTAButton>
-              )}
+              {formStep > 1 && <CTAButton secondary onClick={prevStep}>Retour</CTAButton>}
               <CTAButton fullWidth={formStep === 1} onClick={nextStep} style={{ marginLeft: formStep === 1 ? 0 : "auto" }}>
                 {sending ? "Envoi en cours..." : formStep === 3 ? "Recevoir mon estimation gratuite" : "Continuer"} {!sending && <ArrowRight />}
               </CTAButton>
             </div>
           </div>
         )}
-
         {formStep === 0 && (
           <div style={{ textAlign: "center" }}>
             <CTAButton onClick={() => { setFormStep(1); }}>
@@ -678,15 +695,27 @@ export default function PrezimoLanding() {
         )}
       </section>
 
+      {/* TESTIMONIALS */}
+      <section style={{ padding: "60px 0 80px", overflow: "hidden" }}>
+        <div style={{ textAlign: "center", marginBottom: 40, padding: "0 24px" }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: COLORS.accent, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>
+            Ils nous font confiance
+          </p>
+          <h2 style={{ fontFamily: displayFont, fontSize: "clamp(24px, 3.5vw, 36px)", color: COLORS.primary, margin: "0 0 8px" }}>
+            Ce que disent nos clients
+          </h2>
+          <div style={{ display: "flex", justifyContent: "center", gap: 4, marginTop: 8 }}>
+            {[1,2,3,4,5].map(s => <StarIcon key={s} filled />)}
+            <span style={{ fontSize: 14, color: COLORS.gray600, marginLeft: 8, fontFamily: font }}>4.9/5 — 200+ avis</span>
+          </div>
+        </div>
+        <TestimonialsCarousel font={font} />
+      </section>
+
       {/* TRUST SECTION */}
-      <section style={{
-        padding: "60px 24px 80px",
-        maxWidth: 600,
-        margin: "0 auto",
-      }}>
+      <section style={{ padding: "0 24px 80px", maxWidth: 600, margin: "0 auto" }}>
         <div style={{
-          background: COLORS.white,
-          borderRadius: 20,
+          background: COLORS.white, borderRadius: 20,
           padding: "36px 32px",
           boxShadow: "0 4px 24px rgba(0,0,0,0.04)",
           border: `1px solid ${COLORS.gray200}`,
@@ -698,15 +727,13 @@ export default function PrezimoLanding() {
             </h3>
           </div>
           {[
-            { title: "100% gratuit et sans engagement", desc: "Aucun frais caché, aucune obligation de vente." },
-            { title: "Estimation par un expert local", desc: "Un professionnel qui connaît le marché stéphanois." },
-            { title: "Données confidentielles", desc: "Vos informations ne sont jamais revendues. Conformité RGPD." },
-            { title: "Réponse sous 24h", desc: "Un expert vous rappelle rapidement pour votre estimation." },
+            { title: "100% gratuit et sans engagement", desc: "Aucun frais cache, aucune obligation de vente." },
+            { title: "Estimation par un expert local", desc: "Un professionnel qui connait le marche stephanois." },
+            { title: "Donnees confidentielles", desc: "Vos informations ne sont jamais revendues. Conformite RGPD." },
+            { title: "Reponse sous 24h", desc: "Un expert vous rappelle rapidement pour votre estimation." },
           ].map((item, i) => (
             <div key={i} style={{
-              display: "flex",
-              gap: 14,
-              padding: "14px 0",
+              display: "flex", gap: 14, padding: "14px 0",
               borderBottom: i < 3 ? `1px solid ${COLORS.gray100}` : "none",
             }}>
               <div style={{ flexShrink: 0, marginTop: 2 }}><CheckIcon /></div>
@@ -720,17 +747,9 @@ export default function PrezimoLanding() {
       </section>
 
       {/* FOOTER */}
-      <footer style={{
-        background: COLORS.primary,
-        padding: "40px 24px 24px",
-        textAlign: "center",
-      }}>
+      <footer style={{ background: COLORS.primary, padding: "40px 24px 24px", textAlign: "center" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 12 }}>
-          <div style={{
-            width: 24, height: 24, borderRadius: 6,
-            border: `2px solid ${COLORS.accent}`,
-            position: "relative",
-          }}>
+          <div style={{ width: 24, height: 24, borderRadius: 6, border: `2px solid ${COLORS.accent}`, position: "relative" }}>
             <div style={{ position: "absolute", top: "20%", left: "20%", width: 7, height: 7, borderRadius: 2, background: COLORS.accent }} />
             <div style={{ position: "absolute", bottom: "16%", right: "16%", width: 4, height: 4, borderRadius: "50%", background: COLORS.success }} />
           </div>
@@ -739,68 +758,68 @@ export default function PrezimoLanding() {
           </span>
         </div>
         <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginBottom: 16 }}>
-          © 2026 Prezimo — Tous droits réservés
+          2026 Prezimo — Tous droits reserves
         </p>
         <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
           <button onClick={() => setShowLegal(true)} style={{
             background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 11,
             cursor: "pointer", fontFamily: font, textDecoration: "underline",
-          }}>Mentions légales</button>
+          }}>Mentions legales</button>
           <button onClick={() => setShowPrivacy(true)} style={{
             background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: 11,
             cursor: "pointer", fontFamily: font, textDecoration: "underline",
-          }}>Politique de confidentialité</button>
+          }}>Politique de confidentialite</button>
         </div>
       </footer>
 
-      {/* COOKIE BANNER */}
+      {/* COOKIE BANNER — petit et discret */}
       {showCookies && (
         <div style={{
           position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200,
-          background: COLORS.primary, borderTop: `1px solid rgba(255,255,255,0.1)`,
-          padding: "16px 24px",
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 16, flexWrap: "wrap",
+          background: "rgba(15,29,53,0.97)",
+          borderTop: `1px solid rgba(255,255,255,0.08)`,
+          padding: "10px 20px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          gap: 12, flexWrap: "wrap",
         }}>
-          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, fontFamily: font, margin: 0, maxWidth: 500 }}>
-            Ce site utilise des cookies pour mesurer les performances de nos campagnes. En continuant, vous acceptez leur utilisation.
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 11, fontFamily: font, margin: 0 }}>
+            Ce site utilise des cookies pour mesurer les performances.
           </p>
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => setShowCookies(false)} style={{
-              padding: "8px 20px", borderRadius: 8,
+              padding: "5px 14px", borderRadius: 6,
               background: COLORS.accent, border: "none",
-              color: COLORS.primary, fontSize: 13, fontWeight: 700,
+              color: COLORS.primary, fontSize: 11, fontWeight: 700,
               fontFamily: font, cursor: "pointer",
-            }}>Accepter</button>
+            }}>OK</button>
             <button onClick={() => setShowCookies(false)} style={{
-              padding: "8px 20px", borderRadius: 8,
-              background: "rgba(255,255,255,0.1)", border: "none",
-              color: "rgba(255,255,255,0.5)", fontSize: 13, fontWeight: 600,
+              padding: "5px 14px", borderRadius: 6,
+              background: "rgba(255,255,255,0.08)", border: "none",
+              color: "rgba(255,255,255,0.4)", fontSize: 11,
               fontFamily: font, cursor: "pointer",
             }}>Refuser</button>
           </div>
         </div>
       )}
 
-      {/* MENTIONS LÉGALES MODAL */}
+      {/* MENTIONS LEGALES MODAL */}
       {showLegal && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 300,
-          background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center",
-          padding: 20,
+          background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
         }} onClick={() => setShowLegal(false)}>
           <div style={{
             background: COLORS.white, borderRadius: 16, padding: "32px 28px",
             maxWidth: 560, width: "100%", maxHeight: "80vh", overflowY: "auto",
           }} onClick={(e) => e.stopPropagation()}>
-            <h2 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 16 }}>Mentions légales</h2>
+            <h2 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 16 }}>Mentions legales</h2>
             <div style={{ fontSize: 13, color: COLORS.gray600, lineHeight: 1.7, fontFamily: font }}>
-              <p><strong>Éditeur du site :</strong> Prezimo — Service d'estimation immobilière en ligne.</p>
+              <p><strong>Editeur du site :</strong> Prezimo — Service d'estimation immobiliere en ligne.</p>
               <p><strong>Responsable de la publication :</strong> [Votre nom complet]</p>
               <p><strong>Adresse :</strong> [Votre adresse]</p>
               <p><strong>Email :</strong> contact@prezimo.fr</p>
-              <p><strong>Hébergeur :</strong> Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis — https://vercel.com</p>
-              <p><strong>Numéro SIRET :</strong> [Votre numéro SIRET]</p>
-              <p style={{ marginTop: 12 }}>Conformément aux dispositions de la loi n°2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, les informations ci-dessus sont mises à disposition des utilisateurs du site.</p>
+              <p><strong>Hebergeur :</strong> Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, Etats-Unis — https://vercel.com</p>
+              <p><strong>Numero SIRET :</strong> [Votre numero SIRET]</p>
             </div>
             <button onClick={() => setShowLegal(false)} style={{
               marginTop: 20, padding: "10px 24px", borderRadius: 8,
@@ -812,44 +831,35 @@ export default function PrezimoLanding() {
         </div>
       )}
 
-      {/* POLITIQUE DE CONFIDENTIALITÉ MODAL */}
+      {/* POLITIQUE DE CONFIDENTIALITE MODAL */}
       {showPrivacy && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 300,
-          background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center",
-          padding: 20,
+          background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
         }} onClick={() => setShowPrivacy(false)}>
           <div style={{
             background: COLORS.white, borderRadius: 16, padding: "32px 28px",
             maxWidth: 560, width: "100%", maxHeight: "80vh", overflowY: "auto",
           }} onClick={(e) => e.stopPropagation()}>
-            <h2 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 16 }}>Politique de confidentialité</h2>
+            <h2 style={{ fontFamily: displayFont, fontSize: 22, color: COLORS.primary, marginBottom: 16 }}>Politique de confidentialite</h2>
             <div style={{ fontSize: 13, color: COLORS.gray600, lineHeight: 1.7, fontFamily: font }}>
-              <p><strong>Dernière mise à jour :</strong> Avril 2026</p>
-
-              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>1. Données collectées</h3>
-              <p>Nous collectons les données suivantes via notre formulaire : prénom, nom, numéro de téléphone, adresse email, type de bien, ville/quartier, et délai de vente souhaité.</p>
-
-              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>2. Finalité du traitement</h3>
-              <p>Ces données sont collectées dans le but de vous mettre en relation avec un professionnel de l'immobilier qui réalisera l'estimation gratuite de votre bien.</p>
-
-              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>3. Base légale</h3>
-              <p>Le traitement est fondé sur votre consentement, exprimé lors de la soumission du formulaire (article 6.1.a du RGPD).</p>
-
-              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>4. Destinataires des données</h3>
-              <p>Vos données sont transmises uniquement à un agent immobilier partenaire opérant dans votre secteur géographique. Elles ne sont jamais revendues à des tiers.</p>
-
-              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>5. Durée de conservation</h3>
-              <p>Vos données sont conservées pendant une durée maximale de 12 mois à compter de leur collecte, sauf opposition de votre part.</p>
-
+              <p><strong>Derniere mise a jour :</strong> Avril 2026</p>
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>1. Donnees collectees</h3>
+              <p>Nous collectons les donnees suivantes via notre formulaire : prenom, nom, numero de telephone, adresse email, type de bien, ville/quartier, et delai de vente souhaite.</p>
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>2. Finalite du traitement</h3>
+              <p>Ces donnees sont collectees dans le but de vous mettre en relation avec un professionnel de l'immobilier qui realisera l'estimation gratuite de votre bien.</p>
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>3. Base legale</h3>
+              <p>Le traitement est fonde sur votre consentement, exprime lors de la soumission du formulaire (article 6.1.a du RGPD).</p>
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>4. Destinataires des donnees</h3>
+              <p>Vos donnees sont transmises uniquement a un agent immobilier partenaire operant dans votre secteur geographique. Elles ne sont jamais revendues a des tiers.</p>
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>5. Duree de conservation</h3>
+              <p>Vos donnees sont conservees pendant une duree maximale de 12 mois a compter de leur collecte, sauf opposition de votre part.</p>
               <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>6. Vos droits</h3>
-              <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression, de limitation et de portabilité de vos données. Vous pouvez exercer ces droits en nous contactant à : contact@prezimo.fr</p>
-
+              <p>Conformement au RGPD, vous disposez d'un droit d'acces, de rectification, de suppression, de limitation et de portabilite de vos donnees. Vous pouvez exercer ces droits en nous contactant a : contact@prezimo.fr</p>
               <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>7. Cookies</h3>
-              <p>Ce site utilise le pixel Meta (Facebook) à des fins de mesure de performance publicitaire. Vous pouvez accepter ou refuser ces cookies via le bandeau affiché lors de votre première visite.</p>
-
-              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>8. Réclamation</h3>
-              <p>Vous pouvez introduire une réclamation auprès de la CNIL (Commission Nationale de l'Informatique et des Libertés) : www.cnil.fr</p>
+              <p>Ce site utilise le pixel Meta (Facebook) a des fins de mesure de performance publicitaire.</p>
+              <h3 style={{ fontSize: 15, color: COLORS.primary, marginTop: 16, marginBottom: 6 }}>8. Reclamation</h3>
+              <p>Vous pouvez introduire une reclamation aupres de la CNIL : www.cnil.fr</p>
             </div>
             <button onClick={() => setShowPrivacy(false)} style={{
               marginTop: 20, padding: "10px 24px", borderRadius: 8,
