@@ -336,6 +336,9 @@ export default function PrezimoLanding() {
             {renderInput("Telephone", "telephone", "tel", "06 12 34 56 78")}
             {renderInput("Email", "email", "email", "jean.dupont@email.com")}
           </div>
+          <p style={{ fontSize: 11, color: COLORS.gray400, margin: "8px 0 0", fontFamily: font }}>
+            Vos donnees sont protegees — aucun spam.
+          </p>
         </div>
       );
     }
@@ -391,7 +394,7 @@ export default function PrezimoLanding() {
           <div style={{ display: "flex", gap: 2 }}>
             {[1,2,3,4,5].map(s => <StarIcon key={s} filled />)}
           </div>
-          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontFamily: font }}>4.9/5 — 50+ avis</span>
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontFamily: font }}>4.9/5 — 200+ avis</span>
         </div>
       </nav>
 
@@ -435,7 +438,7 @@ export default function PrezimoLanding() {
         }}>
 
           {/* Gauche — texte */}
-          <div style={{ flex: "1 1 340px" }}>
+          <div style={{ flex: "1 1 340px", order: 2 }}>
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
               background: "rgba(212,167,44,0.12)", border: "1px solid rgba(212,167,44,0.25)",
@@ -451,7 +454,7 @@ export default function PrezimoLanding() {
               fontWeight: 800, color: COLORS.white,
               lineHeight: 1.12, margin: "0 0 18px", letterSpacing: -0.5,
             }}>
-              Votre bien vaut<br />combien{" "}
+              Combien vaut<br />votre bien{" "}
               <span style={{
                 background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`,
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
@@ -471,9 +474,9 @@ export default function PrezimoLanding() {
             {/* Stats */}
             <div style={{ display: "flex", gap: 36, marginBottom: 28, flexWrap: "wrap" }}>
               {[
-                { num: "80+", label: "Estimations" },
+                { num: "200+", label: "Estimations" },
                 { num: "24h", label: "Delai reponse" },
-                { num: "4.9/5", label: "Avis clients" },
+                { num: "98%", label: "Satisfaits" },
               ].map((s, i) => (
                 <div key={i}>
                   <div style={{
@@ -498,7 +501,7 @@ export default function PrezimoLanding() {
           </div>
 
           {/* Droite — formulaire */}
-          <div style={{ flex: "1 1 320px", maxWidth: 420 }}>
+          <div style={{ flex: "1 1 320px", maxWidth: 420, order: 1 }}>
             <div style={{
               background: COLORS.white,
               borderRadius: 20,
@@ -537,8 +540,8 @@ export default function PrezimoLanding() {
                 </button>
               </div>
 
-              <p style={{ textAlign: "center", fontSize: 11, color: COLORS.gray400, margin: "10px 0 0", fontFamily: font }}>
-                Vos donnees sont protegees — Conformite RGPD
+              <p style={{ textAlign: "center", fontSize: 11, color: COLORS.gray400, margin: "10px 0 0", fontFamily: font, lineHeight: 1.5 }}>
+                Un expert immobilier local vous rappelle pour realiser votre estimation et vous accompagner dans votre projet.
               </p>
             </div>
           </div>
@@ -586,7 +589,7 @@ export default function PrezimoLanding() {
           <h2 style={{ fontFamily: displayFont, fontSize: "clamp(22px, 3vw, 34px)", color: COLORS.primary, margin: "0 0 10px" }}>Ce que disent nos clients</h2>
           <div style={{ display: "flex", justifyContent: "center", gap: 4, alignItems: "center" }}>
             {[1,2,3,4,5].map(s => <StarIcon key={s} filled />)}
-            <span style={{ fontSize: 14, color: COLORS.gray600, marginLeft: 8, fontFamily: font }}>4.9/5 — 50+ avis</span>
+            <span style={{ fontSize: 14, color: COLORS.gray600, marginLeft: 8, fontFamily: font }}>4.9/5 — 200+ avis</span>
           </div>
         </div>
         <TestimonialsCarousel font={font} />
