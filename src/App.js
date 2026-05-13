@@ -391,7 +391,7 @@ export default function PrezimoLanding() {
           <div style={{ display: "flex", gap: 2 }}>
             {[1,2,3,4,5].map(s => <StarIcon key={s} filled />)}
           </div>
-          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontFamily: font }}>4.9/5 — 200+ avis</span>
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontFamily: font }}>4.9/5 — 50+ avis</span>
         </div>
       </nav>
 
@@ -471,9 +471,9 @@ export default function PrezimoLanding() {
             {/* Stats */}
             <div style={{ display: "flex", gap: 36, marginBottom: 28, flexWrap: "wrap" }}>
               {[
-                { num: "200+", label: "Estimations" },
+                { num: "80+", label: "Estimations" },
                 { num: "24h", label: "Delai reponse" },
-                { num: "98%", label: "Satisfaits" },
+                { num: "4.9/5", label: "Avis clients" },
               ].map((s, i) => (
                 <div key={i}>
                   <div style={{
@@ -586,7 +586,7 @@ export default function PrezimoLanding() {
           <h2 style={{ fontFamily: displayFont, fontSize: "clamp(22px, 3vw, 34px)", color: COLORS.primary, margin: "0 0 10px" }}>Ce que disent nos clients</h2>
           <div style={{ display: "flex", justifyContent: "center", gap: 4, alignItems: "center" }}>
             {[1,2,3,4,5].map(s => <StarIcon key={s} filled />)}
-            <span style={{ fontSize: 14, color: COLORS.gray600, marginLeft: 8, fontFamily: font }}>4.9/5 — 200+ avis</span>
+            <span style={{ fontSize: 14, color: COLORS.gray600, marginLeft: 8, fontFamily: font }}>4.9/5 — 50+ avis</span>
           </div>
         </div>
         <TestimonialsCarousel font={font} />
