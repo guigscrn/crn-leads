@@ -451,7 +451,7 @@ export default function PrezimoLanding() {
               fontWeight: 800, color: COLORS.white,
               lineHeight: 1.12, margin: "0 0 18px", letterSpacing: -0.5,
             }}>
-              Combien vaut<br />votre bien{" "}
+              Votre bien vaut<br />combien{" "}
               <span style={{
                 background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentHover})`,
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
